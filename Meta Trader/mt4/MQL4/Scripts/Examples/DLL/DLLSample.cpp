@@ -34,6 +34,16 @@ static int CompareMqlStr(const void *left,const void *right);
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Entry point for the DLL.
+ *
+ * This function is called by the system when the DLL is loaded or unloaded.
+ *
+ * @param hModule Handle to the DLL module.
+ * @param ul_reason_for_call Reason for calling the function (e.g., DLL_PROCESS_ATTACH).
+ * @param lpReserved Reserved for future use.
+ * @return TRUE if successful, FALSE otherwise.
+ */
 BOOL APIENTRY DllMain(HANDLE hModule,DWORD ul_reason_for_call,LPVOID lpReserved)
   {
 //---
@@ -51,6 +61,14 @@ BOOL APIENTRY DllMain(HANDLE hModule,DWORD ul_reason_for_call,LPVOID lpReserved)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Example function returning an integer.
+ *
+ * Prints the input integer to the standard output and returns it.
+ *
+ * @param ipar The integer input value.
+ * @return The same integer value.
+ */
 MT4_EXPFUNC int __stdcall GetIntValue(const int ipar)
   {
    printf("GetIntValue takes %d\n",ipar);
@@ -59,6 +77,14 @@ MT4_EXPFUNC int __stdcall GetIntValue(const int ipar)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Example function returning a double.
+ *
+ * Prints the input double to the standard output and returns it.
+ *
+ * @param dpar The double input value.
+ * @return The same double value.
+ */
 MT4_EXPFUNC double __stdcall GetDoubleValue(const double dpar)
   {
    printf("GetDoubleValue takes %.8lf\n",dpar);
@@ -67,6 +93,14 @@ MT4_EXPFUNC double __stdcall GetDoubleValue(const double dpar)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Example function returning a string.
+ *
+ * Prints the input string to the standard output and returns it.
+ *
+ * @param spar The string input value.
+ * @return The same string pointer.
+ */
 MT4_EXPFUNC wchar_t* __stdcall GetStringValue(wchar_t *spar)
   {
    wprintf(L"GetStringValue takes \"%s\"\n",spar);
@@ -75,6 +109,14 @@ MT4_EXPFUNC wchar_t* __stdcall GetStringValue(wchar_t *spar)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Retrieves a value from a double array.
+ *
+ * @param arr Pointer to the double array.
+ * @param arraysize The size of the array.
+ * @param nitem The index of the item to retrieve.
+ * @return The value at the specified index, or 0.0 if invalid.
+ */
 MT4_EXPFUNC double __stdcall GetArrayItemValue(const double *arr,const int arraysize,const int nitem)
   {
 //---
@@ -99,6 +141,15 @@ MT4_EXPFUNC double __stdcall GetArrayItemValue(const double *arr,const int array
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Sets a value in a double array.
+ *
+ * @param arr Pointer to the double array.
+ * @param arraysize The size of the array.
+ * @param nitem The index of the item to set.
+ * @param value The value to assign.
+ * @return True if successful, False if parameters are invalid.
+ */
 MT4_EXPFUNC bool _stdcall SetArrayItemValue(double *arr,const int arraysize,const int nitem,const double value)
   {
 //---
@@ -124,6 +175,15 @@ MT4_EXPFUNC bool _stdcall SetArrayItemValue(double *arr,const int arraysize,cons
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Retrieves a specific field value from a RateInfo array item.
+ *
+ * @param rates Pointer to the RateInfo array.
+ * @param rates_total The total number of rates in the array.
+ * @param shift The shift index (reverse index from the end).
+ * @param nrate The field identifier (0: time, 1: open, 2: low, 3: high, 4: close, 5: tick volume).
+ * @return The value of the requested field as a double, or 0.0 if invalid.
+ */
 MT4_EXPFUNC double __stdcall GetRatesItemValue(const RateInfo* rates,const int rates_total,const int shift,const int nrate)
   {
 //---
@@ -167,6 +227,15 @@ MT4_EXPFUNC double __stdcall GetRatesItemValue(const RateInfo* rates,const int r
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Sorts an array of MqlStr structures.
+ *
+ * Uses qsort to sort the array based on the string content.
+ *
+ * @param arr Pointer to the MqlStr array.
+ * @param arraysize The size of the array.
+ * @return The size of the array if successful, or -1 on failure.
+ */
 MT4_EXPFUNC int __stdcall SortStringArray(MqlStr *arr,const int arraysize)
   {
 //---
@@ -188,6 +257,16 @@ MT4_EXPFUNC int __stdcall SortStringArray(MqlStr *arr,const int arraysize)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Concatenates adjacent strings in an MqlStr array.
+ *
+ * Iterates through the array and appends the string of the next element to the current element,
+ * provided there is enough allocated memory.
+ *
+ * @param arr Pointer to the MqlStr array.
+ * @param arraysize The size of the array.
+ * @return The size of the array if successful, or -1 on failure.
+ */
 MT4_EXPFUNC int __stdcall ProcessStringArray(MqlStr *arr,const int arraysize)
   {
    int   len1,len2;
@@ -232,6 +311,15 @@ MT4_EXPFUNC int __stdcall ProcessStringArray(MqlStr *arr,const int arraysize)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Comparison function for MqlStr structures.
+ *
+ * Used by qsort to compare two MqlStr objects based on their string content.
+ *
+ * @param left Pointer to the first MqlStr object.
+ * @param right Pointer to the second MqlStr object.
+ * @return An integer less than, equal to, or greater than zero if the first argument is considered to be respectively less than, equal to, or greater than the second.
+ */
 int CompareMqlStr(const void *left,const void *right)
   {
    MqlStr *leftstr=(MqlStr *)left;

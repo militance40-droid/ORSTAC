@@ -17,6 +17,16 @@ input int    MovingShift   =6;
 //+------------------------------------------------------------------+
 //| Calculate open positions                                         |
 //+------------------------------------------------------------------+
+/**
+ * @brief Calculates the number of active buy and sell orders for a given symbol.
+ *
+ * This function iterates through all active orders, selecting those that match
+ * the provided symbol and the expert advisor's magic number. It counts the
+ * number of buy and sell orders found.
+ *
+ * @param symbol The currency pair symbol to check for orders (e.g., "EURUSD").
+ * @return The number of buy orders if active buys exist, or the negative number of sell orders if active sells exist. Returns 0 if no orders found.
+ */
 int CalculateCurrentOrders(string symbol)
   {
    int buys=0,sells=0;
@@ -37,6 +47,15 @@ int CalculateCurrentOrders(string symbol)
 //+------------------------------------------------------------------+
 //| Calculate optimal lot size                                       |
 //+------------------------------------------------------------------+
+/**
+ * @brief Calculates the optimal lot size for opening a new position.
+ *
+ * This function calculates the lot size based on the available free margin and
+ * the defined maximum risk. It also decreases the lot size if there have been
+ * recent losses without a subsequent profit, using the DecreaseFactor.
+ *
+ * @return The calculated optimal lot size.
+ */
 double LotsOptimized()
   {
    double lot=Lots;
@@ -70,6 +89,13 @@ double LotsOptimized()
 //+------------------------------------------------------------------+
 //| Check for open order conditions                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Checks for conditions to open a new trade.
+ *
+ * This function checks if a new bar has formed. If so, it calculates the Moving Average.
+ * It then compares the previous candle's open and close prices with the Moving Average
+ * to determine if a Buy or Sell signal exists. If a signal is found, it opens the corresponding order.
+ */
 void CheckForOpen()
   {
    double ma;
@@ -95,6 +121,13 @@ void CheckForOpen()
 //+------------------------------------------------------------------+
 //| Check for close order conditions                                 |
 //+------------------------------------------------------------------+
+/**
+ * @brief Checks for conditions to close existing trades.
+ *
+ * This function iterates through open orders managed by this EA. It calculates the
+ * Moving Average and compares it with the previous candle's prices. If the price
+ * action suggests a reversal (crossing back over the MA), the function closes the position.
+ */
 void CheckForClose()
   {
    double ma;
@@ -132,6 +165,13 @@ void CheckForClose()
 //+------------------------------------------------------------------+
 //| OnTick function                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief The main event handler for tick updates.
+ *
+ * This function is called on every price tick. It checks if there is enough history
+ * and if trading is allowed. It then determines whether to check for opening new orders
+ * or closing existing ones based on whether there are currently active orders.
+ */
 void OnTick()
   {
 //--- check for history and trading

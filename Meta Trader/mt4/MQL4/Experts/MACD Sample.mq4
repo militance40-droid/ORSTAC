@@ -15,6 +15,13 @@ input int    MATrendPeriod =26;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Main Tick event handler.
+ *
+ * This function runs on every tick. It calculates MACD and Moving Average indicators,
+ * checks for entry conditions (MACD crossovers confirmed by trend), opens Buy or Sell orders,
+ * and manages existing orders (closing or trailing stop).
+ */
 void OnTick(void)
   {
    double MacdCurrent,MacdPrevious;

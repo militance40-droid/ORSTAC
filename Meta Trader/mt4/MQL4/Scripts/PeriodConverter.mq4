@@ -14,6 +14,13 @@ int       ExtHandle=-1;
 //+------------------------------------------------------------------+
 //| script program start function                                    |
 //+------------------------------------------------------------------+
+/**
+ * @brief Script entry point.
+ *
+ * Converts the current chart's history to a new period (timeframe) specified by the InpPeriodMultiplier input.
+ * It creates a new offline history file (.hst) and updates it in real-time as new ticks arrive.
+ * This allows creating non-standard timeframes (e.g., M3, H2) from standard ones.
+ */
 void OnStart()
   {
    datetime time0;
@@ -189,6 +196,13 @@ void OnStart()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Script deinitialization function.
+ *
+ * Closes the open history file handle when the script is removed or stopped.
+ *
+ * @param reason Deinitialization reason code.
+ */
 void OnDeinit(const int reason)
   {
 //---

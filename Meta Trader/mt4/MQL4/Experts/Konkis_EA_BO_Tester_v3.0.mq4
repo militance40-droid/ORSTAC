@@ -216,6 +216,16 @@ double mTradingDaysDraw[7];
 //|                   ENTRY POINTS !                                 |
 //| PUT YOUR RULES HERE  :=)                                         |
 //+------------------------------------------------------------------+
+/**
+ * @brief Checks for a valid entry point based on custom rules.
+ *
+ * This function evaluates current market conditions (specifically Bollinger Bands in this example)
+ * to determine if a trade should be opened. It sets the direction of the trade (Up/Call or Down/Put)
+ * if a signal is found.
+ *
+ * @param pIsDirectionUp Reference to a boolean that will be set to true for Call/Up or false for Put/Down.
+ * @return True if a valid entry point is found, false otherwise.
+ */
 bool checkEntryPoint(bool  &pIsDirectionUp)
   {
 
@@ -252,6 +262,14 @@ bool checkEntryPoint(bool  &pIsDirectionUp)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Expert Advisor initialization function.
+ *
+ * Initializes the EA, sets up the timer, customizes the chart appearance, and displays
+ * initial text on the chart.
+ *
+ * @return INIT_SUCCEEDED on success, or an error code on failure.
+ */
 int OnInit()
   {
 //--- create timer
@@ -287,6 +305,14 @@ int OnInit()
 //+------------------------------------------------------------------+
 //| Expert deinitialization function                                 |
 //+------------------------------------------------------------------+
+/**
+ * @brief Expert Advisor deinitialization function.
+ *
+ * Performs cleanup when the EA is removed or recompiled. It logs the final journal stats
+ * and kills the timer.
+ *
+ * @param reason Deinitialization reason code.
+ */
 void OnDeinit(const int reason)
   {
 
@@ -299,6 +325,16 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
+/**
+ * @brief Main tick event handler.
+ *
+ * This function is the core of the EA. It handles:
+ * - Checking trade results at candle close or fixed time.
+ * - Managing open bets (checking wins/losses, updating stats).
+ * - Handling Martingale logic.
+ * - Checking for new entry signals (based on indicators or strategies).
+ * - Updating the HMI (Head-Up Display) on the chart.
+ */
 void OnTick()
   {
 
@@ -682,6 +718,14 @@ void OnTick()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Opens a new trade (simulated).
+ *
+ * Records the trade entry details (price, time, direction) into the internal bets array.
+ * It also updates the account balance (deducting investment) and handles visual indicators (entry line).
+ *
+ * @param pDirection The direction of the trade (eCall or ePut).
+ */
 void openTrade(EBetStatus pDirection)
   {
 
@@ -735,6 +779,12 @@ void openTrade(EBetStatus pDirection)
 //+------------------------------------------------------------------+
 //| Display HMI on Chart window                                              |
 //+------------------------------------------------------------------+
+/**
+ * @brief Displays the Head-Up Display (HMI) on the chart.
+ *
+ * Updates the text labels on the chart to show current account balance, wins, losses,
+ * draws, consecutive win/loss stats, and win rate.
+ */
 void displayHMI()
   {
    displayText("Balance  : "+DoubleToStr(mAccountBalance,2),1,clrYellow);
@@ -758,6 +808,12 @@ void displayHMI()
 //+------------------------------------------------------------------+
 //| Display Journal in the log window to avoid using visual mode     |
 //+------------------------------------------------------------------+
+/**
+ * @brief Prints statistics to the Expert Journal.
+ *
+ * Outputs summary statistics (balance, wins, losses, win rate) and detailed breakdown
+ * by hour and day to the log. Useful for backtesting analysis without visual mode.
+ */
 void displayJournal()
   {
    double ltotal=mNbWins+mNbLoss+mNbDraws;
@@ -798,6 +854,14 @@ void displayJournal()
 // UTILITIES FUNCTIONS
 //********
 //
+/**
+ * @brief Checks for an entry signal using a custom external indicator.
+ *
+ * Reads buffers from a specified custom indicator to determine if a trade signal exists.
+ *
+ * @param pIsDirectionUp Reference to a boolean set to true for Call, false for Put.
+ * @return True if a signal is found, false otherwise.
+ */
 bool checkEntryOnSimpleIndicator(bool  &pIsDirectionUp)
 {
    
@@ -825,6 +889,12 @@ bool checkEntryOnSimpleIndicator(bool  &pIsDirectionUp)
 //+------------------------------------------------------------------+
 //| Move all bets -1 to remove first one                          |
 //+------------------------------------------------------------------+
+/**
+ * @brief Removes the oldest bet from the bets array.
+ *
+ * Shifts all bets in the array down by one index, effectively removing the first element.
+ * Decrements the count of open bets.
+ */
 void moveAllBets()
   {
    for(int i=1; i<mNbBetOpened; i++)
@@ -836,6 +906,13 @@ void moveAllBets()
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
+/**
+ * @brief Checks if a new bar has opened.
+ *
+ * Compares the current bar time with the last recorded bar time to detect a new candle.
+ *
+ * @return True if a new bar has opened, false otherwise.
+ */
 bool New_Bar()
   {
    if(New_Time!=iTime(Symbol(),Period(),0))
@@ -847,6 +924,13 @@ bool New_Bar()
   }
 //+------------------------------------------------------------------+
 //+------------------------------------------------------------------+
+/**
+ * @brief Draws a "Down" arrow on the chart.
+ *
+ * Creates a down arrow object at the specified candle to indicate a Put entry.
+ *
+ * @param pCandleElapsed The number of candles elapsed since the entry (used to find the time/price).
+ */
 void drawArrowDown(int pCandleElapsed)
   {
    ObjectCreate("Down"+IntegerToString(mSellOrderObjectsNumber),OBJ_ARROW_DOWN,0,Time[pCandleElapsed],High[pCandleElapsed]+10*Point);
@@ -855,6 +939,13 @@ void drawArrowDown(int pCandleElapsed)
    mSellOrderObjectsNumber++;
   }
 //+------------------------------------------------------------------+
+/**
+ * @brief Draws an "Up" arrow on the chart.
+ *
+ * Creates an up arrow object at the specified candle to indicate a Call entry.
+ *
+ * @param pCandleElapsed The number of candles elapsed since the entry.
+ */
 void drawArrowUp(int pCandleElapsed)
   {
    ObjectCreate("Up"+IntegerToString(mBuyOrderObjectsNumber),OBJ_ARROW_UP,0,Time[pCandleElapsed],Low[pCandleElapsed]-5*Point);
@@ -865,6 +956,13 @@ void drawArrowUp(int pCandleElapsed)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Draws a "Stop" (X) sign on the chart.
+ *
+ * Indicates a losing trade.
+ *
+ * @param pDrawTop If true, draws above the high of the candle; otherwise below the low.
+ */
 void drawArrowStop(bool pDrawTop)
   {
    double lObjectPrice;
@@ -887,6 +985,13 @@ void drawArrowStop(bool pDrawTop)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Draws a "Check" (tick) sign on the chart.
+ *
+ * Indicates a winning trade.
+ *
+ * @param pDrawTop If true, draws above the high of the candle; otherwise below the low.
+ */
 void drawArrowCheck(bool pDrawTop)
   {
    double lObjectPrice;
@@ -908,6 +1013,13 @@ void drawArrowCheck(bool pDrawTop)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+/**
+ * @brief Draws a "Draw" (Stop sign in blue) on the chart.
+ *
+ * Indicates a break-even trade (draw).
+ *
+ * @param pDrawTop If true, draws above the high of the candle; otherwise below the low.
+ */
 void drawDraw(bool pDrawTop)
   {
    double lObjectPrice;
@@ -929,6 +1041,13 @@ void drawDraw(bool pDrawTop)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+ 
+/**
+ * @brief Draws a horizontal line indicating the entry price.
+ *
+ * Creates a small horizontal line at the Bid price when a trade is opened.
+ *
+ * @param pIsCall True for a Call trade (Blue line), False for a Put trade (Yellow line).
+ */
 void drawEntryLine(bool pIsCall)
   {
    string objName="Line"+IntegerToString(mLineObjectsNumber);
@@ -956,6 +1075,13 @@ void drawEntryLine(bool pIsCall)
      }
   }
 //+------------------------------------------------------------------+
+/**
+ * @brief Displays text on the chart at a specified vertical position (Left side).
+ *
+ * @param pText The text string to display.
+ * @param pPosition The vertical position index (used to calculate Y coordinate).
+ * @param pColor The color of the text.
+ */
 void displayText(string pText,int pPosition,color pColor=clrWhite)
   {
    string obj_name="Text"+IntegerToString(pPosition);
@@ -967,6 +1093,13 @@ void displayText(string pText,int pPosition,color pColor=clrWhite)
    ObjectSet(obj_name,OBJPROP_COLOR,pColor);
   }
 //+------------------------------------------------------------------+
+/**
+ * @brief Displays text on the chart at a specified vertical position (Right side).
+ *
+ * @param pText The text string to display.
+ * @param pRightPosition The vertical position index (used to calculate Y coordinate).
+ * @param pColor The color of the text.
+ */
 void displayTextRight(string pText,int pRightPosition,color pColor=clrWhite)
   {
    string obj_name="TextRight"+IntegerToString(pRightPosition);
@@ -979,6 +1112,13 @@ void displayTextRight(string pText,int pRightPosition,color pColor=clrWhite)
    ObjectSet(obj_name,OBJPROP_COLOR,pColor);
   }
 //+------------------------------------------------------------------+
+/**
+ * @brief Displays text on the chart at the bottom-left corner.
+ *
+ * @param pText The text string to display.
+ * @param pPosition The vertical position index (used to calculate Y coordinate).
+ * @param pColor The color of the text.
+ */
 void displayTextDownLeft(string pText,int pPosition,color pColor=clrWhite)
   {
    string obj_name="TextDown"+IntegerToString(pPosition);
